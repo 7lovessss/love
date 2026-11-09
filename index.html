@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>测测你的恋爱人格 · 十二问</title>
+<meta name="description" content="十二个真实的恋爱场景，测你是燎原、深潭、渡口、孤舟、琴弦还是长明，附恋爱画像、雷区与最适配类型。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2312110F'/%3E%3Cpath d='M16 26c-7-4.6-10-9-10-13.4C6 9 8.4 6.5 11.6 6.5c2 0 3.4 1.1 4.4 2.9 1-1.8 2.4-2.9 4.4-2.9C23.6 6.5 26 9 26 12.6c0 4.4-3 8.8-10 13.4z' fill='%23FF4A1C'/%3E%3C/svg%3E">
+<style>
+:root{
+  --ink:#121110;
+  --ink-2:#3A3833;
+  --paper:#F4F3EE;
+  --paper-2:#E9E7DF;
+  --flame:#FF4A1C;
+  --moss:#1F3B32;
+  --muted:#8B8A82;
+  --line:rgba(18,17,16,.14);
+  --line-strong:rgba(18,17,16,.3);
+  --sans:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Source Han Sans SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer}
+.view{display:none}
+.view.active{display:block}
+
+/* ===== 开屏 ===== */
+.intro{position:relative;min-height:100svh;background:var(--paper);overflow:hidden;display:flex;align-items:center}
+.intro-shape{
+  position:absolute;right:-24vw;top:-18vw;width:64vw;height:64vw;min-width:520px;min-height:520px;
+  background:var(--flame);border-radius:50%;pointer-events:none;z-index:0;
+}
+.intro-grid{
+  position:absolute;left:0;right:0;bottom:0;height:38svh;pointer-events:none;z-index:0;opacity:.35;
+  background-image:linear-gradient(to right,var(--line) 1px,transparent 1px);
+  background-size:calc(100% / 6) 100%;
+  -webkit-mask-image:linear-gradient(to top,#000,transparent);
+  mask-image:linear-gradient(to top,#000,transparent);
+}
+.intro-inner{position:relative;z-index:2;width:100%;max-width:1180px;margin:0 auto;padding:64px 22px 90px}
+.tagrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:clamp(28px,5vw,54px)}
+.chip{
+  font-size:12px;letter-spacing:.06em;padding:5px 10px;border:1px solid var(--line-strong);
+  background:rgba(244,243,238,.7);backdrop-filter:blur(2px);
+}
+.chip.solid{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.intro h1{
+  margin:0;font-weight:700;font-size:clamp(40px,11.6vw,116px);line-height:.98;
+  letter-spacing:-.045em;color:var(--ink);position:relative;
+}
+.intro h1 em{
+  display:block;font-style:normal;font-weight:400;font-size:clamp(14px,2.6vw,19px);
+  letter-spacing:.02em;line-height:1.7;margin-top:22px;max-width:22em;color:var(--ink-2);
+}
+.intro h1 .thin{display:block;font-weight:300;letter-spacing:-.02em}
+.intro-desc{max-width:25em;margin:26px 0 0;font-size:15px;line-height:1.95;color:var(--ink-2)}
+.intro-desc b{font-weight:600;color:var(--ink);border-bottom:2px solid var(--flame);padding-bottom:1px}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:36px}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 28px;
+  border:1px solid var(--ink);background:transparent;color:var(--ink);
+  font-size:15px;font-weight:600;letter-spacing:.02em;transition:all .2s ease;
+}
+.btn:hover{background:var(--ink);color:var(--paper)}
+.btn-solid{background:var(--flame);border-color:var(--flame);color:#fff}
+.btn-solid:hover{background:#121110;border-color:#121110;color:var(--paper)}
+.btn-ghost{border-color:var(--line-strong);color:var(--ink-2);font-weight:500}
+.btn-ghost:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.typebar{
+  display:flex;flex-wrap:wrap;gap:6px;margin-top:clamp(34px,6vw,64px);position:relative;z-index:2;
+}
+.typebar span{
+  font-size:12px;letter-spacing:.04em;color:var(--ink-2);border-bottom:1px solid var(--line-strong);
+  padding:2px 2px 3px;
+}
+.typebar span i{font-style:normal;color:var(--muted);margin-right:5px}
+.intro-meta{position:absolute;left:22px;right:22px;bottom:20px;z-index:3;font-size:11.5px;letter-spacing:.04em;color:var(--muted);display:flex;justify-content:space-between;gap:12px}
+
+/* ===== 答题 ===== */
+.sheet{min-height:100svh;background:var(--paper);padding:0 0 70px}
+.wrap{max-width:880px;margin:0 auto;padding:0 22px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:20px 0 12px}
+.topbar .brand{font-size:12.5px;letter-spacing:.02em;color:var(--muted)}
+.topbar .count{font-size:12.5px;color:var(--ink);font-weight:600}
+.topbar .count span{color:var(--flame)}
+.ticks{display:flex;gap:3px;margin-bottom:6px}
+.ticks i{flex:1;height:2px;background:rgba(18,17,16,.1);transition:background .25s ease}
+.ticks i.done{background:var(--ink)}
+.ticks i.now{background:var(--flame)}
+.qblock{padding:44px 0 0}
+.qnum{font-size:clamp(28px,5vw,44px);font-weight:700;letter-spacing:-.03em;line-height:1;color:var(--flame);margin-bottom:18px}
+.qnum small{font-size:12px;font-weight:500;letter-spacing:.06em;color:var(--muted);display:block;margin-top:8px}
+.qtext{font-size:clamp(23px,4.6vw,34px);line-height:1.42;letter-spacing:-.02em;margin:0 0 28px;font-weight:600;max-width:20em}
+.opts{display:grid;border-top:1px solid var(--line-strong)}
+.opt{
+  display:flex;gap:14px;align-items:flex-start;width:100%;text-align:left;
+  padding:20px 4px;background:transparent;border:0;border-bottom:1px solid var(--line);
+  color:var(--ink);font-size:16px;line-height:1.75;position:relative;
+  transition:background .18s ease,padding-left .18s ease;
+}
+.opt:hover{background:rgba(255,74,28,.07);padding-left:12px}
+.opt .tag{
+  flex:0 0 auto;width:7px;height:7px;border-radius:50%;background:rgba(18,17,16,.16);margin-top:9px;
+  transition:background .2s ease,transform .2s ease;
+}
+.opt .txt{flex:1 1 auto;min-width:0}
+.opt .arrow{flex:0 0 auto;color:var(--muted);font-size:13px;margin-top:2px;opacity:0;transition:opacity .2s ease}
+.opt:hover .arrow{opacity:1}
+.opt.sel{background:rgba(255,74,28,.1)}
+.opt.sel .tag{background:var(--flame);transform:scale(1.5)}
+.opt.sel .txt{font-weight:600}
+.qfoot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:22px}
+.qfoot-note{font-size:12px;color:var(--muted)}
+.linkbtn{background:none;border:0;padding:8px 0;min-height:44px;font-size:13.5px;color:var(--ink-2);border-bottom:1px solid transparent}
+.linkbtn:hover{color:var(--flame);border-bottom-color:var(--flame)}
+.linkbtn[disabled]{opacity:.3;cursor:default}
+.linkbtn[disabled]:hover{color:var(--ink-2);border-bottom-color:transparent}
+
+/* ===== 结果 ===== */
+.result{background:var(--paper);padding:0 0 64px}
+.card{max-width:880px;margin:0 auto;padding:0 22px}
+.rhead{border-top:3px solid var(--ink);padding:18px 0 0}
+.rlabel{font-size:11.5px;letter-spacing:.08em;color:var(--muted);margin-bottom:10px}
+.rname{font-size:clamp(46px,13vw,110px);line-height:.95;letter-spacing:-.05em;font-weight:700;margin:0;color:var(--ink)}
+.rname small{display:block;font-size:clamp(13px,2.4vw,15px);font-weight:400;letter-spacing:0;line-height:1.7;color:var(--ink-2);margin-top:14px}
+.rkeys{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px}
+.rkey{font-size:12px;padding:4px 9px;border:1px solid var(--line-strong);color:var(--ink-2)}
+.conc{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-top:26px;flex-wrap:wrap}
+.conc-left{flex:1 1 240px;min-width:200px}
+.conc-label{font-size:11.5px;letter-spacing:.06em;color:var(--muted)}
+.conc-track{height:6px;background:var(--paper-2);margin-top:8px;position:relative}
+.conc-fill{height:100%;width:0;background:var(--flame);transition:width 1.1s cubic-bezier(.2,.8,.2,1)}
+.conc-num{font-size:clamp(28px,6vw,40px);font-weight:700;letter-spacing:-.03em;line-height:1;flex:0 0 auto}
+.conc-num span{font-size:14px;font-weight:500;color:var(--muted);letter-spacing:0;margin-left:2px}
+
+.quote{
+  margin:32px 0 0;padding:26px 0;border-top:1px solid var(--line-strong);border-bottom:1px solid var(--line-strong);
+  font-size:clamp(20px,3.6vw,28px);line-height:1.5;font-weight:500;letter-spacing:-.015em;color:var(--ink);
+  position:relative;
+}
+.quote::before{content:"";position:absolute;left:0;top:-1px;width:38px;height:3px;background:var(--flame)}
+
+.secs{display:grid;grid-template-columns:1fr;gap:0}
+@media(min-width:760px){.secs{grid-template-columns:1fr 1fr;gap:0 40px}}
+.sec{padding:24px 0 4px;border-bottom:1px solid var(--line)}
+.sec h3{margin:0 0 8px;font-size:11.5px;letter-spacing:.06em;font-weight:600;color:var(--moss);text-transform:none}
+.sec p{margin:0 0 16px;font-size:15px;line-height:1.95;color:var(--ink-2);max-width:32em}
+.sec p b{font-weight:600;color:var(--ink)}
+
+.bars{padding:26px 0 6px;border-bottom:1px solid var(--line)}
+.bars h3{margin:0 0 14px;font-size:11.5px;letter-spacing:.06em;font-weight:600;color:var(--moss)}
+.bar-row{display:grid;grid-template-columns:64px 1fr 46px;gap:10px;align-items:center;margin-bottom:10px}
+.bar-name{font-size:13.5px;font-weight:500;white-space:nowrap;color:var(--ink)}
+.bar-track{height:4px;background:var(--paper-2)}
+.bar-fill{height:100%;background:rgba(18,17,16,.22);width:0;transition:width .9s ease}
+.bar-fill.top{background:var(--flame)}
+.bar-val{font-size:11.5px;color:var(--muted);text-align:right}
+
+.tips{padding:26px 0 0;display:flex;gap:16px;align-items:flex-start}
+.tips-mark{flex:0 0 auto;width:46px;height:46px;background:var(--ink);color:var(--paper);display:flex;align-items:center;justify-content:center;font-size:12px;line-height:1.2;text-align:center}
+.tips p{margin:0;font-size:15.5px;line-height:1.95;color:var(--ink-2);max-width:32em}
+.tips p b{color:var(--ink);font-weight:600}
+
+.actions-row{display:flex;flex-wrap:wrap;gap:8px;padding:32px 0 4px}
+.disc{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);font-size:11.5px;line-height:1.9;color:var(--muted);max-width:36em}
+.share-note{font-size:11.5px;color:var(--moss);min-height:1em;margin-top:8px}
+
+/* 纸面按钮 */
+.pbtn{
+  display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 22px;
+  border:1px solid var(--ink);background:transparent;color:var(--ink);
+  font-size:14px;font-weight:600;transition:all .2s ease;
+}
+.pbtn:hover{background:var(--ink);color:var(--paper)}
+.pbtn.main{background:var(--flame);border-color:var(--flame);color:#fff}
+.pbtn.main:hover{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+
+/* ===== 图鉴 ===== */
+.gallery{background:var(--paper);padding:22px 0 70px;min-height:100svh}
+.g-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;border-bottom:3px solid var(--ink);padding-bottom:14px}
+.g-head h2{margin:0;font-weight:700;font-size:clamp(26px,5.4vw,40px);letter-spacing:-.03em}
+.g-head .gsub{font-size:11.5px;letter-spacing:.04em;color:var(--muted)}
+.g-list{display:grid}
+.g-item{display:grid;gap:8px;padding:22px 0;border-bottom:1px solid var(--line)}
+@media(min-width:720px){.g-item{grid-template-columns:48px 150px 1fr;gap:24px;align-items:start}}
+.g-idx{font-size:12px;color:var(--flame);font-weight:600;letter-spacing:.02em;padding-top:6px}
+.g-name{font-size:22px;font-weight:700;letter-spacing:-.02em}
+.g-name span{display:block;font-size:11.5px;font-weight:400;letter-spacing:0;color:var(--muted);margin-top:5px;line-height:1.7}
+.g-body{margin:0;font-size:14.5px;line-height:1.9;color:var(--ink-2)}
+.g-body em{font-style:normal;font-weight:600;color:var(--ink)}
+.gback{margin-top:24px}
+.footnote{max-width:880px;margin:30px auto 0;padding:14px 22px 0;border-top:1px solid var(--line);font-size:11.5px;line-height:1.9;color:var(--muted)}
+
+@media (max-width:520px){
+  .intro-shape{right:-42vw;top:-10vw;min-width:420px;min-height:420px;opacity:.92}
+  .intro h1 em{margin-top:16px}
+  .sec h3,.bars h3{letter-spacing:.05em}
+}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.001ms !important;animation-duration:.001ms !important}}
+</style>
+</head>
+<body>
+
+<!-- ===== 开屏 ===== -->
+<section class="view active" id="view-intro">
+  <div class="intro">
+    <div class="intro-shape" aria-hidden="true"></div>
+    <div class="intro-grid" aria-hidden="true"></div>
+    <div class="intro-inner">
+      <div class="tagrow">
+        <span class="chip solid">恋爱人格测试</span>
+        <span class="chip">十二问</span>
+        <span class="chip">约三分钟</span>
+        <span class="chip">六种类型</span>
+      </div>
+      <h1>
+        恋爱里<span class="thin">你是哪一种人</span>
+        <em>有人点火，有人守夜；有人只想并肩走一段。<br>没有标准答案，只有你下意识的那一下。</em>
+      </h1>
+      <p class="intro-desc">
+        不回消息的第四天、吵架时的沉默、他说想一个人待着——<b>十二个真实会发生的场景</b>，答完给你一张恋爱画像。
+      </p>
+      <div class="actions">
+        <button class="btn btn-solid" data-go="quiz">开 始 测 试</button>
+        <button class="btn btn-ghost" data-go="gallery">先看六种类型</button>
+      </div>
+      <div class="typebar" aria-hidden="true">
+        <span><i>01</i>燎原</span><span><i>02</i>深潭</span><span><i>03</i>渡口</span>
+        <span><i>04</i>孤舟</span><span><i>05</i>琴弦</span><span><i>06</i>长明</span>
+      </div>
+    </div>
+    <div class="intro-meta">
+      <span>趣味向人格投射 · 非专业诊断</span>
+      <span>原创内容</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 答题 ===== -->
+<section class="view" id="view-quiz">
+  <div class="sheet">
+    <div class="wrap">
+      <div class="topbar">
+        <span class="brand">恋爱人格 · 十二问</span>
+        <span class="count" id="qcount">01 / 12</span>
+      </div>
+      <div class="ticks" id="ticks" aria-hidden="true"></div>
+      <div class="qblock">
+        <div class="qnum" id="qnum">01<small>十二问之一</small></div>
+        <h3 class="qtext" id="qtext">题目加载中</h3>
+        <div class="opts" id="opts"></div>
+        <div class="qfoot">
+          <button class="linkbtn" id="prevBtn" disabled>上一题</button>
+          <span class="qfoot-note">按 1–4 也可作答</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ===== 结果 ===== -->
+<section class="view" id="view-result">
+  <div class="result">
+    <div class="card">
+      <div class="rhead">
+        <div class="rlabel">你的类型</div>
+        <h2 class="rname" id="rname">—<small id="rsub"></small></h2>
+        <div class="rkeys" id="rkeys"></div>
+        <div class="conc">
+          <div class="conc-left">
+            <div class="conc-label">本型浓度</div>
+            <div class="conc-track"><div class="conc-fill" id="concFill"></div></div>
+          </div>
+          <div class="conc-num"><span id="concNum">—</span><span>%</span></div>
+        </div>
+      </div>
+
+      <div class="quote" id="rverdict"></div>
+
+      <div class="secs">
+        <div class="sec"><h3>恋爱里的你</h3><p id="rdetail"></p></div>
+        <div class="sec"><h3>你的软肋</h3><p id="rweak"></p></div>
+        <div class="sec"><h3>你的吸引力</h3><p id="rcharm"></p></div>
+        <div class="sec"><h3>你的雷区</h3><p id="rmine"></p></div>
+        <div class="sec"><h3>最容易互相消耗</h3><p id="rclash"></p></div>
+        <div class="sec"><h3>最适配的类型</h3><p id="rmatch"></p></div>
+      </div>
+
+      <div class="bars">
+        <h3>六种类型，你各占几分</h3>
+        <div id="bars"></div>
+      </div>
+
+      <div class="tips">
+        <div class="tips-mark">一句<br>建议</div>
+        <p id="rtip"></p>
+      </div>
+
+      <div class="actions-row">
+        <button class="pbtn main" id="shareBtn">复制结果，去发给朋友</button>
+        <button class="pbtn" id="againBtn">重新测一次</button>
+        <button class="pbtn" data-go="gallery">看六种类型</button>
+      </div>
+      <p class="share-note" id="shareNote"></p>
+
+      <p class="disc">
+        说明：本测试为趣味向的人格投射，类型名称与解读均为原创，不构成心理测评、诊断或任何专业意见；结果只描述"在某些关系里更常见的倾向"，不代表你只能是这样的人。
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 图鉴 ===== -->
+<section class="view" id="view-gallery">
+  <div class="gallery">
+    <div class="wrap">
+      <div class="g-head">
+        <h2>六种恋爱人格</h2>
+        <span class="gsub">火 · 水 · 岸 · 舟 · 弦 · 灯</span>
+      </div>
+      <div class="g-list" id="glist"></div>
+      <div class="gback">
+        <button class="pbtn" data-go="back">回到测试</button>
+      </div>
+      <p class="footnote">
+        六种类型只是六种常见的关系倾向，不是六个盒子。多数人会在不同的人、不同的阶段里，落进不同的那一格。
+      </p>
+    </div>
+  </div>
+</section>
+
+<script>
+var QUESTIONS = [
+ { q:"他三天没回消息，第四天发来一句「最近太忙」。你会——",
+   opts:[
+    {t:"直接问：忙什么，忙到连一句都不肯给？", p:"liao", s:"gu"},
+    {t:"先放一放，等他自己想起我。", p:"shen", s:"ming"},
+    {t:"回一句「辛苦了」，然后把自己的事安排满。", p:"du", s:"ming"},
+    {t:"不追问，默默把这段关系的分量重新掂一遍。", p:"gu", s:"shen"}
+   ]},
+ { q:"刚在一起一个月，对方开始规划明年的事。你的第一反应是——",
+   opts:[
+    {t:"心里先紧一下：这么快，是不是想把我框住。", p:"qin", s:"gu"},
+    {t:"觉得踏实，也跟着一起想。", p:"ming", s:"du"},
+    {t:"兴奋，立刻开始想更远的。", p:"liao", s:"shen"},
+    {t:"笑着说「先过好这个月」，手已经在帮他排行程。", p:"du", s:"ming"}
+   ]},
+ { q:"你发现喜欢的人身上，有个很难改的毛病。",
+   opts:[
+    {t:"先观察，看这毛病会不会碰上我的底线。", p:"gu", s:"shen"},
+    {t:"直接讲。改不改是他的事，但我得说出来。", p:"liao", s:"gu"},
+    {t:"想的是能不能一起慢慢磨。", p:"ming", s:"du"},
+    {t:"反复琢磨：他是不是根本没把我放在心上。", p:"qin", s:"shen"}
+   ]},
+ { q:"吵架时，你最怕对方做什么？",
+   opts:[
+    {t:"冷下来，什么都不说，把我关在门外。", p:"shen", s:"qin"},
+    {t:"把我付出过的都拿出来算账。", p:"du", s:"ming"},
+    {t:"拿「离开」当筹码。", p:"gu", s:"liao"},
+    {t:"敷衍地哄，心里根本没当回事。", p:"liao", s:"shen"}
+   ]},
+ { q:"你表达喜欢的方式，更像——",
+   opts:[
+    {t:"记住他说过的每件小事，然后在某天做到。", p:"ming", s:"du"},
+    {t:"试探、绕一圈，等他自己发现。", p:"qin", s:"shen"},
+    {t:"慢慢把人放进生活里，不说，但哪都有他。", p:"shen", s:"ming"},
+    {t:"把他需要的事提前办好，不声张。", p:"du", s:"ming"}
+   ]},
+ { q:"一段关系里，你最受不了的是——",
+   opts:[
+    {t:"温吞。什么都好，就是没有热度。", p:"liao", s:"gu"},
+    {t:"被管。连和谁吃饭都要报备。", p:"gu", s:"liao"},
+    {t:"忽冷忽热。今天很近，明天像陌生人。", p:"qin", s:"shen"},
+    {t:"不确定。永远不知道自己在他心里是哪一档。", p:"ming", s:"qin"}
+   ]},
+ { q:"分手之后，你通常会——",
+   opts:[
+    {t:"先想自己哪里没做好，把复盘做得很彻底。", p:"du", s:"ming"},
+    {t:"安静很久。不联系，也不删。", p:"shen", s:"qin"},
+    {t:"大哭一场，然后该删的删、该断的断。", p:"liao", s:"gu"},
+    {t:"生活照旧，只是把那个人从计划里拿掉。", p:"gu", s:"liao"}
+   ]},
+ { q:"对方说「我最近状态不好，想一个人待着」。",
+   opts:[
+    {t:"立刻想：是不是我做错了什么。", p:"qin", s:"shen"},
+    {t:"说「我在」，然后真的等着。", p:"ming", s:"du"},
+    {t:"不问原因，先把他的日常照顾好。", p:"du", s:"ming"},
+    {t:"尊重他，退回自己的世界，等他想说。", p:"shen", s:"gu"}
+   ]},
+ { q:"你最容易在恋爱里丢掉的东西是——",
+   opts:[
+    {t:"自己的节奏。", p:"gu", s:"shen"},
+    {t:"分寸。", p:"liao", s:"gu"},
+    {t:"底线。", p:"ming", s:"du"},
+    {t:"安全感。", p:"qin", s:"du"}
+   ]},
+ { q:"你心里理想的关系，更像——",
+   opts:[
+    {t:"两个人各有各的房间，门却始终开着。", p:"shen", s:"gu"},
+    {t:"我照顾他，他离不开我。", p:"du", s:"ming"},
+    {t:"并肩走路，谁也不用为谁停下。", p:"gu", s:"shen"},
+    {t:"一起烧一把火，哪怕只烧三年。", p:"liao", s:"qin"}
+   ]},
+ { q:"你希望对方记住你的哪一点？",
+   opts:[
+    {t:"我一直在。", p:"ming", s:"du"},
+    {t:"我懂他没说出口的那些。", p:"qin", s:"shen"},
+    {t:"我从没敷衍过他。", p:"shen", s:"ming"},
+    {t:"他最难的时候，是我撑住的。", p:"du", s:"ming"}
+   ]},
+ { q:"如果恋爱是一场考试，你最想补的一课是——",
+   opts:[
+    {t:"学会要。别总是给。", p:"du", s:"ming"},
+    {t:"学会信。别总在猜。", p:"qin", s:"ming"},
+    {t:"学会说。别总等人懂。", p:"shen", s:"liao"},
+    {t:"学会走。别总在原地等。", p:"ming", s:"gu"}
+   ]}
+];
+
+var CN = ["一","二","三","四","五","六","七","八","九","十","十一","十二"];
+
+var TYPES = {
+ liao:{
+  name:"燎原", sub:"烈火型 · 主动、直给、要热度",
+  keys:["主动","直给","热烈","怕温吞"],
+  verdict:"你要的是烧起来，不是暖起来。",
+  detail:"你爱得直接：喜欢就说，不高兴也当场讲。你不怕先低头，怕的是关系温吞到连架都懒得吵。你把热情当诚意，也默认对方该用同样的温度回应你。",
+  weak:"分寸。你的热烈很容易变成压迫；对方退一步，你会加倍往前，最后把两个人的节奏都烧没了。",
+  charm:"你敢先迈那一步。很多人一辈子都在等对方开口，你不是。",
+  mine:"敷衍式哄、冷处理。你宁可直接吵一架，也受不了被含混地对待。",
+  clash:"和 <b>深潭</b> 最容易互相消耗：你越烧，他越沉，最后你觉得他没有心，他觉得你太吵。",
+  match:"跟 <b>长明</b> 最适配：一个点火，一个守火，热度能烧得久一点。",
+  tip:"想要热度没有错，但要允许对方用慢一点的方式回应你。不是所有人都用「说出口」来表达在意。",
+  gal:"主动、热烈、直给。恋爱里你很少留遗憾，因为想说的话，你基本都说出口了。"
+ },
+ shen:{
+  name:"深潭", sub:"深水型 · 慢热、克制、水面下很深",
+  keys:["慢热","克制","细节派","不轻易开门"],
+  verdict:"你不轻易开门，可一旦开了，就很难关上。",
+  detail:"你慢，但不是冷。你先看、先等，在安全的距离里确认这个人靠不靠得住，然后才一点点把人放进生活。你的爱不在话里，在细节里：他随口提过的东西，你都记着。",
+  weak:"说。你总觉得懂的人自然懂，可多数人只会以为你不在意；等你想开口，时机常常已经过去了。",
+  charm:"你的稳定。跟你在一起久了，人会变松弛，因为知道你不会突然走。",
+  mine:"被催、被审、被要求时时表态。",
+  clash:"和 <b>燎原</b> 最容易互相消耗：他烧得太快，你沉得太深，两个人都在等对方先动。",
+  match:"跟 <b>琴弦</b> 最适配：都敏感，都读得懂沉默，不用解释太多。",
+  tip:"沉默不是坏事，但偶尔把心里那一句说出来，比让人猜有用得多。",
+  gal:"慢热、克制、把感情沉在水下。别人以为你淡，只有走近的人知道你在意得多深。"
+ },
+ du:{
+  name:"渡口", sub:"照顾型 · 付出、兜底、把爱做成事",
+  keys:["照顾","兜底","能扛事","不擅索取"],
+  verdict:"你习惯把人渡过去，却常常自己留在岸上。",
+  detail:"你爱人的方式是解决问题：他累了你安排，他难了你先顶上。你不擅长说「我需要」，擅长说「我来」。你从付出里确认自己的位置，也从中换到一点安全感。",
+  weak:"要。你给得太多，多到对方忘了你也需要被照顾；委屈攒够了才爆发，一爆发就像在算总账。",
+  charm:"你让人踏实。跟你在一起，日子是被接住的，不是被过的。",
+  mine:"付出被当成理所当然。",
+  clash:"和 <b>孤舟</b> 最容易互相消耗：你要靠近，他要空间，你越照顾，他越想跑。",
+  match:"跟 <b>长明</b> 最适配：两个人都愿意做事，也都不太计较谁多做一点。",
+  tip:"试着把「我来」换成「你帮我」。这不是示弱，是给对方一个位置。",
+  gal:"照顾、兜底、把对方的日常当成自己的事。你的爱很具体：一顿饭、一趟接送、一句「我处理好了」。"
+ },
+ gu:{
+  name:"孤舟", sub:"独立型 · 边界、自持、不失速",
+  keys:["独立","有边界","自持","不怕一个人"],
+  verdict:"你不是不爱，是不肯为谁改航线。",
+  detail:"你清楚自己要什么，也清楚自己不能被拿走什么。你可以很投入，但节奏必须还在自己手上；谁一靠近就想接管你的生活，你会立刻退回岸上。",
+  weak:"松。你把独立当盔甲，久了对方会觉得这扇门永远推不开；你也习惯了用「我不需要」挡掉所有靠近。",
+  charm:"你有自己的世界。这份完整本身就很迷人。",
+  mine:"报备、查手机、以爱为名的管。",
+  clash:"和 <b>渡口</b> 最容易互相消耗：他越照顾，你越想逃；你越退，他越觉得自己不被需要。",
+  match:"跟 <b>深潭</b> 最适配：各有一间房，门始终开着。",
+  tip:"独立和亲密不冲突。留一道门缝，比把门闩死更安全。",
+  gal:"独立、有边界、不轻易被改变。你爱人，但不把自己整个交出去。"
+ },
+ qin:{
+  name:"琴弦", sub:"敏感型 · 察言观色、反复确认、共情力强",
+  keys:["细腻","敏锐","共情","容易内耗"],
+  verdict:"你听得见别人听不见的那根弦。",
+  detail:"你对关系里的细微变化极敏感：一句回复的延迟、一个语气的转折，你都能读出来。你擅长共情，也擅长在还没发生的事里先疼一遍。你的爱是反复确认，确认了才敢安心。",
+  weak:"信。你容易把「他不说」读成「他不爱」，然后在心里演完一整场戏；试探多了，对方会累。",
+  charm:"你懂人。你能接住别人没说出口的那部分。",
+  mine:"忽冷忽热、含糊其辞。",
+  clash:"和 <b>燎原</b> 最容易互相消耗：他的忽高忽低，会把你的弦一根根磨断。",
+  match:"跟 <b>长明</b> 最适配：稳定能安住你，你也能读懂他的沉默。",
+  tip:"把猜测换成提问。一句「我有点不安，你能说说吗」，胜过十次试探。",
+  gal:"细腻、敏锐、共情力强。你爱得认真，也累得认真。"
+ },
+ ming:{
+  name:"长明", sub:"陪伴型 · 稳定、守诺、把爱做进日常",
+  keys:["稳定","守诺","低损耗","难替代"],
+  verdict:"你不太会焰火，但你不会熄。",
+  detail:"你不擅长制造戏剧性，擅长把日子过长。答应的事会做到，说「我在」就真的在。你的爱是低损耗、长时间的：不响，但很难被替代。",
+  weak:"走。你太能等，一个不回头的人也能等很久；该离开的时候，你总说「再看一年」。",
+  charm:"可靠。你是那种让人敢把后背交出来的人。",
+  mine:"被当成理所当然。",
+  clash:"和 <b>孤舟</b> 最容易互相消耗：你要靠近，他要空间，你等得越久，越像在原地罚站。",
+  match:"跟 <b>渡口</b> 最适配：你守，他撑，日子真的能过下去。",
+  tip:"长情是优点，但不是所有等待都值得。给自己一个期限，比给自己一个理由更管用。",
+  gal:"稳定、守诺、把爱做成日常。你不惊艳，但你让人放心。"
+ }
+};
+var ORDER = ["liao","shen","du","gu","qin","ming"];
+
+var state = { idx:0, answers:new Array(QUESTIONS.length).fill(null), lastView:"intro" };
+function $(id){ return document.getElementById(id); }
+function pad(n){ return (n<10 ? "0" : "") + n; }
+
+function show(view){
+  var cur = document.querySelector(".view.active");
+  if(cur) state.lastView = cur.id.replace("view-","");
+  document.querySelectorAll(".view").forEach(function(v){ v.classList.remove("active"); });
+  $("view-"+view).classList.add("active");
+  window.scrollTo(0,0);
+}
+
+function renderTicks(){
+  var box = $("ticks"); box.innerHTML = "";
+  for(var i=0;i<QUESTIONS.length;i++){
+    var el = document.createElement("i");
+    if(state.answers[i]!==null) el.className = "done";
+    else if(i===state.idx) el.className = "now";
+    box.appendChild(el);
+  }
+}
+
+function renderQ(){
+  var q = QUESTIONS[state.idx];
+  $("qcount").textContent = pad(state.idx+1) + " / 12";
+  $("qnum").innerHTML = pad(state.idx+1) + "<small>十二问之" + CN[state.idx] + "</small>";
+  $("qtext").textContent = q.q;
+  var box = $("opts"); box.innerHTML = "";
+  q.opts.forEach(function(o,i){
+    var b = document.createElement("button");
+    b.className = "opt" + (state.answers[state.idx]===i ? " sel" : "");
+    b.innerHTML = '<span class="tag" aria-hidden="true"></span><span class="txt">' + o.t + '</span><span class="arrow" aria-hidden="true">选它</span>';
+    b.addEventListener("click", function(){ choose(i); });
+    box.appendChild(b);
+  });
+  $("prevBtn").disabled = state.idx===0;
+  renderTicks();
+}
+
+function choose(i){
+  state.answers[state.idx] = i;
+  renderQ();
+  setTimeout(function(){
+    if(state.idx < QUESTIONS.length-1){ state.idx++; renderQ(); }
+    else compute();
+  }, 240);
+}
+
+function compute(){
+  var score = {}, prim = {};
+  ORDER.forEach(function(k){ score[k]=0; prim[k]=0; });
+  state.answers.forEach(function(a,qi){
+    if(a===null) return;
+    var o = QUESTIONS[qi].opts[a];
+    score[o.p] += 2; prim[o.p] += 1;
+    if(o.s) score[o.s] += 1;
+  });
+  var best = ORDER[0];
+  ORDER.forEach(function(k){
+    if(score[k] > score[best]) best = k;
+    else if(score[k] === score[best] && prim[k] > prim[best]) best = k;
+  });
+  renderResult(best, score);
+}
+
+function renderResult(key, score){
+  var c = TYPES[key];
+  $("rname").innerHTML = c.name + '<small>' + c.sub + '</small>';
+  $("rkeys").innerHTML = c.keys.map(function(k){ return '<span class="rkey">' + k + '</span>'; }).join("");
+  $("rverdict").textContent = c.verdict;
+  $("rdetail").textContent = c.detail;
+  $("rweak").textContent = c.weak;
+  $("rcharm").textContent = c.charm;
+  $("rmine").textContent = c.mine;
+  $("rclash").innerHTML = c.clash;
+  $("rmatch").innerHTML = c.match;
+  $("rtip").textContent = c.tip;
+
+  var pct = Math.min(99, Math.round(56 + 43 * score[key] / 24));
+  $("concNum").textContent = pct;
+  var fill = $("concFill");
+  fill.style.width = "0%";
+  setTimeout(function(){ fill.style.width = pct + "%"; }, 60);
+
+  var max = Math.max.apply(null, ORDER.map(function(k){ return score[k]; }));
+  var bars = $("bars"); bars.innerHTML = "";
+  ORDER.forEach(function(k){
+    var row = document.createElement("div");
+    row.className = "bar-row";
+    row.innerHTML = '<span class="bar-name">' + TYPES[k].name + '</span>' +
+      '<span class="bar-track"><span class="bar-fill' + (k===key?' top':'') + '"></span></span>' +
+      '<span class="bar-val">' + score[k] + ' 分</span>';
+    bars.appendChild(row);
+    var f = row.querySelector(".bar-fill");
+    setTimeout(function(){ f.style.width = (max ? score[k]/max*100 : 0) + "%"; }, 120);
+  });
+
+  $("shareNote").textContent = "";
+  $("shareBtn").dataset.key = key;
+  $("shareBtn").dataset.pct = pct;
+  show("result");
+}
+
+function buildGallery(){
+  var box = $("glist"); box.innerHTML = "";
+  ORDER.forEach(function(k,i){
+    var c = TYPES[k];
+    var item = document.createElement("div");
+    item.className = "g-item";
+    item.innerHTML = '<div class="g-idx">' + pad(i+1) + '</div>' +
+      '<div class="g-name">' + c.name + '<span>' + c.sub + '</span></div>' +
+      '<p class="g-body"><em>' + c.verdict + '</em><br>' + c.gal + '</p>';
+    box.appendChild(item);
+  });
+}
+
+document.addEventListener("click", function(e){
+  var t = e.target.closest("[data-go]");
+  if(!t) return;
+  var go = t.dataset.go;
+  if(go==="quiz"){ state.idx=0; state.answers = new Array(QUESTIONS.length).fill(null); renderQ(); show("quiz"); }
+  else if(go==="gallery"){ buildGallery(); show("gallery"); }
+  else if(go==="back"){ show(state.lastView || "intro"); }
+});
+
+$("prevBtn").addEventListener("click", function(){ if(state.idx>0){ state.idx--; renderQ(); } });
+$("againBtn").addEventListener("click", function(){
+  state.idx=0; state.answers = new Array(QUESTIONS.length).fill(null); renderQ(); show("quiz");
+});
+
+$("shareBtn").addEventListener("click", function(){
+  var key = this.dataset.key, c = TYPES[key], pct = this.dataset.pct;
+  var text = "我的恋爱人格是「" + c.name + "」，本型浓度 " + pct + "%。\n" + c.verdict + "\n十二个场景，测你在恋爱里是哪一种人。";
+  var done = function(){
+    $("shareNote").textContent = "已复制，去发给那个最该看到的人。";
+    setTimeout(function(){ $("shareNote").textContent = ""; }, 2600);
+  };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done, function(){ fallbackCopy(text, done); });
+  } else fallbackCopy(text, done);
+});
+
+function fallbackCopy(text, cb){
+  var ta = document.createElement("textarea");
+  ta.value = text; ta.setAttribute("readonly","");
+  ta.style.position="fixed"; ta.style.opacity="0";
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand("copy"); cb(); }catch(e){}
+  document.body.removeChild(ta);
+}
+
+document.addEventListener("keydown", function(e){
+  if(!$("view-quiz").classList.contains("active")) return;
+  var n = parseInt(e.key,10);
+  if(n>=1 && n<=4) choose(n-1);
+});
+
+renderQ();
+</script>
+
+</body>
+</html>
